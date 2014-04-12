@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- This file store project specific CSS -->
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/project.css" rel="stylesheet">
 
     <!-- Use this to quickly test CSS changes in a template, 
@@ -14,14 +16,91 @@
   </head>
 
   <body>
-      {% block content %}
-        <p>This is your new omakase project. To make your first app type:</p>
-        <pre>python manage.py startapp chocolate_taster</pre>
-      {% endblock content %}
+
+
+    {% block content %}
+    <div class="container">
+      <div class="row">
+        <h1>OmniLingo<br><small>Nyheter på ditt språk</small></h1>
+        <p>
+          <form>
+            <select class="form-control">
+              <option>Svenska</option>
+              <option>Ryska</option>
+              <option>Bulgariska</option>
+              <option>Engelska</option>
+            </select>
+          </form>
+        </p>
+      </div>
+
+      <div class="row article-title">
+        <h3>Ukraina ställer in betalningar – risk för gaskrig ökar</h3>
+      
+        <ul class="list-inline">
+          <li><span class="glyphicon glyphicon-tag"></span> <a data="%D0%A3%D0%BA%D1%80%D0%B0%D0%B8%D0%BD%D0%B0" id="related" href="javascript:void(0);">Ukraina</a></li>
+          <li><span class="glyphicon glyphicon-tag"></span> <a id="related" data="Россия" href="javascript:void(0);">Ryssland</a></li>
+        </ul>
+
+        <div id="articles"></div>
+      </div>
+
+      <div class="row article-title">
+        <h3>Datorfel hotar viktig leverans till ISS</h3>
+      
+        <ul class="list-inline">
+          <li><span class="glyphicon glyphicon-tag"></span> <a data="ISS" id="related" href="javascript:void(0);">ISS</a></li>
+          <li><span class="glyphicon glyphicon-tag"></span> <a id="related" data="Nasa" href="javascript:void(0);">Nasa</a></li>
+          <li><span class="glyphicon glyphicon-tag"></span> <a id="related" data="Rymden" href="javascript:void(0);">Rymden</a></li>
+        </ul>
+
+        <div id="articles"></div>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <p class="text-center footy"><small>Made with <span class="glyphicon glyphicon-heart"></span> at <a href="http://www.hackaway.se">#hackaway</a><br>Ana, Marcus, and Pernilla</small></p>
+      </div>
+    </div>
+    {% endblock content %}
 
     <!-- place project specific Javascript in this file -->
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="{{ STATIC_URL }}js/project.js"></script>
-
     {% block extra_js %}{% endblock extra_js %}
+
+    <script>
+    $('[id^=related]').on('click', function() {
+      var topic = $(this).attr('data');
+      var placeholder = $(this).parent().parent().next();
+      $.ajax({
+        url: '/internal/search/' + topic,
+        dataType: 'json',
+        success: function(data) {
+          var translated = data.items;
+          
+          translated.sort(function(a, b) {
+            if (a.engagement == undefined)
+              return 1;
+            if (a.engagement < b.engagement)
+              return 1;
+            if (a.engagement > b.engagement)
+              return -1;
+            return 0;
+          });
+
+          translated.forEach(function(element) {
+            placeholder.append(
+              '<div class="translated">' +
+              '<h4><a href="' + element.alternate.href + '">' + element.title + '</a></h4>' +
+              '<p>' + element.summary.content + '</p>' +
+              '</div>');
+          });
+        }
+      });
+    });
+    </script>
+
   </body>
 </html>

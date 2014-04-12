@@ -1,1 +1,22 @@
 /*! project specific CSS goes here. */
+
+#articles .translated {
+  overflow: auto;
+  padding: 10px;
+}
+
+#articles .translated:nth-child(even) {
+  background-color: #efefef;
+}
+
+#articles .translated:nth-child(odd) {
+  background-color: #fefefe;
+}
+
+.article-title {
+
+}
+
+.footy, .footy a:link {
+  color: #9e9e9e;
+}
