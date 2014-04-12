@@ -7,6 +7,6 @@ South==0.7.6
 psycopg2==2.4.5
 newrelic==1.11.0.55
 django-celery-with-redis==3.0
-django-celery==3.0.17
+django-celery==3.0.23
 django-redis-cache==0.10.0
 redis==2.7.6
