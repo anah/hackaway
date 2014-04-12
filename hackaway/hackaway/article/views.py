@@ -1,33 +1,36 @@
-# -*- coding: utf-8 -*-
-
-import requests
-import json
+from django.views.generic import View
 
 import logging
+from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 
-from django.http import HttpResponse
+from .models import Article
 
 logger = logging.getLogger(__name__)
 
-def search(request, topic):
 
-  payload = {
-    'streamId': 'topic/' + topic,
-    'hours': 8
-  }
+class OmniArticlesView(CsrfExemptMixin, JsonRequestResponseMixin, View):
+    http_method_names = ['post']
+    require_json = True
 
-  url = 'http://cloud.feedly.com/v3/mixes/contents'
-
-  logger.debug(url)
-
-  data = requests.get(url, params=payload)
-
-  if data.status_code == 200:
-    response = HttpResponse(data.text)
-    # response['Content-type'] = 'application/json'
-    return response
-  else:
-    console.warning('ErrorCode from feedly: ' + data.status_code)
-    response = HttpResponse(json.dumps({'items': ['No articles found']}))
-    # response['Content-type'] = 'application/json'
-    return response
+    def post(self, request, *args, **kwargs):
+        try:
+            logger.info(self.request_json)
+            omni_id = self.request_json[u'id']
+            if Article.objects.filter(omni_id=omni_id).exists():
+                return self.render_json_response({'status': 'OK'})
+            article = Article()
+            article.omni_id = self.request_json[u'id']
+            article.author = self.request_json[u'author']
+            article.category = self.request_json[u'category']
+            article.title = self.request_json[u'title']
+            article.text = self.request_json[u'text']
+            article.title = self.request_json[u'title']
+            image_urls = self.request_json[u'images']
+            if image_urls:
+                article.image_url = image_urls[0]
+            article.save()
+            article.add_tags(self.request_json[u'tags'])
+        except KeyError, e:
+            logger.debug(e)
+            return self.render_json_response({'status': 'error'})
+        return self.render_json_response({'status': 'OK'})
