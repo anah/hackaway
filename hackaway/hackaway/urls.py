@@ -21,6 +21,7 @@ urlpatterns = patterns('',
 
     url(r'^internal/search/(\w+)$', 'article.internal.search'),
     url(r'^internal/translate/(\w+)/(\w+)$', 'article.internal.translate'),
+    url(r'^internal/languages$', 'article.internal.languages'),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),

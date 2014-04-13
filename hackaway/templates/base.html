@@ -25,10 +25,7 @@
         <p>
           <form>
             <select id="language" class="form-control">
-              <option value="sv">Svenska</option>
-              <option value="ru">Ryska</option>
-              <option value="bg">Bulgariska</option>
-              <option value="en">Engelska</option>
+              <option value="en">Välj språk</option>
             </select>
           </form>
         </p>
@@ -81,6 +78,7 @@
         dataType: 'json',
         success: function(translated_tag) {
           var tag = translated_tag.translation[0];
+          console.log('Query: ' + lang + ' - ' + tag);
           searchRelated(tag);
         }
       });
@@ -113,6 +111,21 @@
         });
       }
     });
+
+    $(document).ready(function() {
+      $.ajax({
+        url: '/internal/languages',
+        dataType: 'json',
+        success: function(data) {
+          Object.keys(data.langs).forEach(function(element) {
+            $('#language').append('<option value="' + element + '">' + data.langs[element] + '</option>');
+          });
+          
+        }
+      })
+      // data.langs = { key: val }
+    });
+
     </script>
 
   </body>

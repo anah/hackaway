@@ -11,7 +11,6 @@ from django.http import HttpResponse
 logger = logging.getLogger('django.request')
 
 def search(request, topic):
-
   payload = {
     'streamId': 'topic/' + topic,
     'hours': 8
@@ -32,15 +31,17 @@ def search(request, topic):
     return response
     
 
-YANDEX_HOST = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+YANDEX_TRANSLATE = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+YANDEX_LANGUAGES = 'https://translate.yandex.net/api/v1.5/tr.json/getLangs'
 
 def translate(request, target_language, tag):
   payload = {
     'key': os.environ['YANDEX_API_KEY'],
     'lang': target_language,
-    'text': tag
+    'text': tag,
+    'locale': target_language
   }
-  res = requests.get(YANDEX_HOST, params=payload)
+  res = requests.get(YANDEX_TRANSLATE, params=payload)
   data = json.loads(res.text, 'utf-8')
 
   if data['code'] == 200:
@@ -48,3 +49,11 @@ def translate(request, target_language, tag):
   else:
     logger.warn('translation failed: ' + data)
     return HttpResponse(json.dumps({ 'lang': 'sv', 'translation': tag}))
+
+def languages(request):
+  payload = {
+    'key': os.environ['YANDEX_API_KEY'],
+    'ui': 'en'
+  }
+  res = requests.get(YANDEX_LANGUAGES, params=payload)
+  return HttpResponse(res.text)
