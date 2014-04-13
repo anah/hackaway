@@ -10,3 +10,4 @@ django-celery-with-redis==3.0
 django-celery==3.0.23
 django-redis-cache==0.10.0
 redis==2.7.6
+requests==2.2.1
