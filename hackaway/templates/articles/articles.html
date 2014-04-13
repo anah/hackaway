@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+
+{% block extra_css %}
+    <link href="{{ STATIC_URL }}css/articles.css" rel="stylesheet">
+{% endblock extra_css %}
+
+{% block content %}
+    <div id="articles"></div>
+    {% for article in articles %}
+        {% include "articles/article.html" %}
+    {% endfor %}
+    </div>
+
+{% endblock %}

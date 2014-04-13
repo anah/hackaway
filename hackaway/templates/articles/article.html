@@ -1,0 +1,20 @@
+<div class="row article-title">
+    <h3>{{ article.title }}</h3>
+
+    <div class="article-image col-lg-2">
+        <img class="img-responsive" src="{{article.image_url}}">
+    </div>
+    <div class="col-lg-10">
+        <p>{{ article.text }}</p>
+
+        <div>
+            <ul class="list-inline">
+                {% for tag in article.tag.all %}
+                    <li><span class="glyphicon glyphicon-tag"></span>
+                        <a href="javascript:void(0);">{{ tag.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+

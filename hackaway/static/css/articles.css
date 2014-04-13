@@ -1,0 +1,9 @@
+.article-image {
+    height: 300px;
+}
+
+.article-image .img-responsive {
+    display: block;
+    width: auto;
+    max-height: 100%;
+}
