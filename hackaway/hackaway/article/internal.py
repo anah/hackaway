@@ -5,9 +5,10 @@ import json
 
 import logging
 
+import os
 from django.http import HttpResponse
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django.request')
 
 def search(request, topic):
 
@@ -17,8 +18,6 @@ def search(request, topic):
   }
 
   url = 'http://cloud.feedly.com/v3/mixes/contents'
-
-  logger.debug(url)
 
   data = requests.get(url, params=payload)
 
@@ -32,3 +31,20 @@ def search(request, topic):
     # response['Content-type'] = 'application/json'
     return response
     
+
+YANDEX_HOST = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
+
+def translate(request, target_language, tag):
+  payload = {
+    'key': os.environ['YANDEX_API_KEY'],
+    'lang': target_language,
+    'text': tag
+  }
+  res = requests.get(YANDEX_HOST, params=payload)
+  data = json.loads(res.text, 'utf-8')
+
+  if data['code'] == 200:
+    return HttpResponse(json.dumps({ 'lang': data['lang'], 'translation': data['text']}))
+  else:
+    logger.warn('translation failed: ' + data)
+    return HttpResponse(json.dumps({ 'lang': 'sv', 'translation': tag}))

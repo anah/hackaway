@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     url(r'^internal/search/(\w+)$', 'article.internal.search'),
+    url(r'^internal/translate/(\w+)/(\w+)$', 'article.internal.translate'),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),

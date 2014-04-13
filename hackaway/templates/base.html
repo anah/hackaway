@@ -24,11 +24,11 @@
         <h1>OmniLingo<br><small>Nyheter på ditt språk</small></h1>
         <p>
           <form>
-            <select class="form-control">
-              <option>Svenska</option>
-              <option>Ryska</option>
-              <option>Bulgariska</option>
-              <option>Engelska</option>
+            <select id="language" class="form-control">
+              <option value="sv">Svenska</option>
+              <option value="ru">Ryska</option>
+              <option value="bg">Bulgariska</option>
+              <option value="en">Engelska</option>
             </select>
           </form>
         </p>
@@ -72,33 +72,46 @@
 
     <script>
     $('[id^=related]').on('click', function() {
+      var lang = $("#language option:selected").val();
       var topic = $(this).attr('data');
       var placeholder = $(this).parent().parent().next();
-      $.ajax({
-        url: '/internal/search/' + topic,
-        dataType: 'json',
-        success: function(data) {
-          var translated = data.items;
-          
-          translated.sort(function(a, b) {
-            if (a.engagement == undefined)
-              return 1;
-            if (a.engagement < b.engagement)
-              return 1;
-            if (a.engagement > b.engagement)
-              return -1;
-            return 0;
-          });
 
-          translated.forEach(function(element) {
-            placeholder.append(
-              '<div class="translated">' +
-              '<h4><a href="' + element.alternate.href + '">' + element.title + '</a></h4>' +
-              '<p>' + element.summary.content + '</p>' +
-              '</div>');
-          });
+      $.ajax({
+        url: '/internal/translate/' + lang + '/' + topic,
+        dataType: 'json',
+        success: function(translated_tag) {
+          var tag = translated_tag.translation[0];
+          searchRelated(tag);
         }
       });
+
+      var searchRelated = function(tag) {
+        $.ajax({
+          url: '/internal/search/' + tag,
+          dataType: 'json',
+          success: function(data) {
+            var translated = data.items;
+            
+            translated.sort(function(a, b) {
+              if (a.engagement == undefined)
+                return 1;
+              if (a.engagement < b.engagement)
+                return 1;
+              if (a.engagement > b.engagement)
+                return -1;
+              return 0;
+            });
+
+            translated.forEach(function(element) {
+              placeholder.append(
+                '<div class="translated">' +
+                '<h4><a href="' + element.alternate.href + '">' + element.title + '</a></h4>' +
+                '<p>' + element.summary.content + '</p>' +
+                '</div>');
+            });
+          }
+        });
+      }
     });
     </script>
 
