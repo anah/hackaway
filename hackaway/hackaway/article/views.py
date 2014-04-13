@@ -5,7 +5,7 @@ from braces.views import CsrfExemptMixin, JsonRequestResponseMixin
 
 from .models import Article
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django.request')
 
 
 class OmniArticlesView(CsrfExemptMixin, JsonRequestResponseMixin, View):
